@@ -46,7 +46,6 @@ mv -f 05-rpmostree.install.bak 05-rpmostree.install
 mv -f 50-dracut.install.bak 50-dracut.install
 popd
 
-dnf5 -y config-manager setopt "*rpmfusion*".enabled=false
 dnf5 -y copr enable bieszczaders/kernel-cachyos-addons
 dnf5 -y install scx-scheds
 dnf5 -y copr disable bieszczaders/kernel-cachyos-addons
