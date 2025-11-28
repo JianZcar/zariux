@@ -2,6 +2,8 @@
 
 set -ouex pipefail
 
+CONFIG_FILE="/ctx/config.yaml"
+
 echo "Using config file from: $CONFIG_FILE"
 
 echo "Dumping contents of $CONFIG_FILE:"
