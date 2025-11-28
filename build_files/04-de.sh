@@ -40,6 +40,9 @@ PKGS_TO_INSTALL=(
     libjxl
     ffmpegthumbnailer
 
+    cliphist
+    matugen
+
     default-fonts-core-emoji
     google-noto-color-emoji-fonts
     google-noto-emoji-fonts
@@ -50,10 +53,6 @@ PKGS_TO_INSTALL=(
 PKGS_TO_UNINSTALL=(
 
 )
-
-dnf -y --enablerepo copr:copr.fedorainfracloud.org:zirconium:packages install \
-    matugen \
-    cliphist
 
 dnf install -y --setopt=install_weak_deps=False \
     niri \
@@ -68,24 +67,6 @@ dnf5 -y install "${PKGS_TO_INSTALL[@]}"
 
 sed -i '/gnome_keyring.so/ s/-auth/auth/ ; /gnome_keyring.so/ s/-session/session/' /etc/pam.d/greetd
 cat /etc/pam.d/greetd
-
-add_wants_niri() {
-    sed -i "s/\[Unit\]/\[Unit\]\nWants=$1/" "/usr/lib/systemd/user/niri.service"
-}
-add_wants_niri cliphist.service
-add_wants_niri swayidle.service
-add_wants_niri xwayland-satellite.service
-cat /usr/lib/systemd/user/niri.service
-
-systemctl enable --global dms.service
-systemctl enable --global cliphist.service
-systemctl enable --global gnome-keyring-daemon.socket
-systemctl enable --global gnome-keyring-daemon.service
-systemctl enable --global swayidle.service
-systemctl enable --global xwayland-satellite.service
-systemctl preset --global cliphist
-systemctl preset --global swayidle
-systemctl preset --global xwayland-satellite
 
 git clone "https://github.com/noctalia-dev/noctalia-shell.git" /usr/share/zirconium/noctalia-shell
 cp /usr/share/zirconium/skel/Pictures/Wallpapers/mountains.png /usr/share/zirconium/noctalia-shell/Assets/Wallpaper/noctalia.png

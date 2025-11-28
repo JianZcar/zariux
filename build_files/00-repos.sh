@@ -15,8 +15,8 @@ COPRS=(
     yalter/niri-git
     avengemedia/danklinux
     avengemedia/dms-git
-
-    zirconium/packages
+    purian23/matugen
+    guillermodotn/cliphist
 )
 
 for COPR in "${COPRS[@]}"; do
