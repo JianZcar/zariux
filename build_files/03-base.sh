@@ -58,6 +58,7 @@ PKGS_TO_INSTALL=(
     wireplumber
 
     git
+    yq
 
     ublue-brew
     uupd

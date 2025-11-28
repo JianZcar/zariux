@@ -28,6 +28,7 @@ systemctl mask "${mask_services[@]}"
 add_wants_niri() {
     sed -i "s/\[Unit\]/\[Unit\]\nWants=$1/" "/usr/lib/systemd/user/niri.service"
 }
+
 add_wants_niri cliphist.service
 add_wants_niri swayidle.service
 add_wants_niri xwayland-satellite.service
