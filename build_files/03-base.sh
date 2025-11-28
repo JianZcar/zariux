@@ -57,6 +57,8 @@ PKGS_TO_INSTALL=(
     pipewire
     wireplumber
 
+    git
+
     ublue-brew
     uupd
     ublue-os-udev-rules
