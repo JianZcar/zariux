@@ -1,3 +1,12 @@
+- path: /etc/greetd/config.toml
+  content: |
+    [terminal]
+    vt = 1
+
+    [default_session]
+    user = "greeter"
+    command = "dms-greeter --command niri"
+
 - path: /usr/lib/systemd/user/dms.service
   content: |
     [Unit]
