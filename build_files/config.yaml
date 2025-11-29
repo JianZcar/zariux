@@ -23,10 +23,6 @@
         ]
     }
 
-- path: /usr/lib/bootc/kargs.d/99-nvidia.toml
-  content: |
-    kargs = ["nvidia-drm.modeset=1", "rd.driver.blacklist=nouveau", "modprobe.blacklist=nouveau"]
-
 - path: /usr/lib/systemd/zram-generator.conf
   content: |
     [zram0]
