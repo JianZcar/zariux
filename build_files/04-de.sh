@@ -7,6 +7,11 @@ set -ouex pipefail
 shopt -s nullglob
 
 packages=(
+    mesa-libEGL
+    mesa-libgbm
+    libdrm
+    libinput
+
     quickshell-git
     dms
     dms-cli
