@@ -19,6 +19,7 @@ system_services=(
 user_services=(
     dms.service
     cliphist.service
+    dsearch.service
     gnome-keyring-daemon.socket
     gnome-keyring-daemon.service
     swayidle.service
