@@ -1,3 +1,42 @@
+- path: /etc/nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json
+  content: |
+    {
+        "rules": [
+            {
+                "pattern": {
+                    "feature": "procname",
+                    "matches": "niri"
+                },
+                "profile": "Limit Free Buffer Pool On Wayland Compositors"
+            }
+        ],
+        "profiles": [
+            {
+                "name": "Limit Free Buffer Pool On Wayland Compositors",
+                "settings": [
+                    {
+                        "key": "GLVidHeapReuseRatio",
+                        "value": 0
+                    }
+                ]
+            }
+        ]
+    }
+
+
+- path: /usr/lib/systemd/zram-generator.conf
+  content: |
+    [zram0]
+    zram-size = min(ram, 8192)
+
+- path: /usr/lib/systemd/system-preset/91-resolved-default.preset
+  content: |
+    enable systemd-resolved.service
+
+- path: /usr/lib/tmpfiles.d/resolved-default.conf
+  content: |
+    L /etc/resolv.conf - - - - ../run/systemd/resolve/stub-resolv.conf
+
 - path: /etc/greetd/config.toml
   content: |
     [terminal]

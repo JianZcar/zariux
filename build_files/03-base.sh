@@ -6,8 +6,10 @@ set -ouex pipefail
 
 shopt -s nullglob
 
-PKGS_TO_INSTALL=(
-    # Wifi
+packages=(
+    ############################
+    # WIFI / WIRELESS FIRMWARE #
+    ############################
     NetworkManager-wifi
     atheros-firmware
     brcmfmac-firmware
@@ -19,12 +21,17 @@ PKGS_TO_INSTALL=(
     realtek-firmware
     tiwilink-firmware
 
-    # Audio
+    ############################
+    # AUDIO / SOUND FIRMWARE   #
+    ############################
     alsa-firmware
     alsa-sof-firmware
     alsa-tools-firmware
     intel-audio-firmware
 
+    ############################
+    # SYSTEM / CORE UTILITIES  #
+    ############################
     audit
     audispd-plugins
     cifs-utils
@@ -33,6 +40,16 @@ PKGS_TO_INSTALL=(
     fuse-common
     fuse-devel
     fwupd
+    man-db
+    systemd-container
+    tuned
+    tuned-ppd
+    unzip
+    whois
+
+    ############################
+    # CAMERA / MOBILE SUPPORT  #
+    ############################
     gvfs-mtp
     gvfs-smb
     ifuse
@@ -42,60 +59,86 @@ PKGS_TO_INSTALL=(
     libcamera-gstreamer
     libcamera-tools
     libimobiledevice
-    man-db
-    plymouth
-    plymouth-system-theme
-    rclone
-    steam-devices
-    systemd-container
-    tuned
-    tuned-ppd
-    unzip
     uxplay
-    whois
 
+    ############################
+    # GAMING / HARDWARE        #
+    ############################
+    steam-devices
+
+    ############################
+    # FILE TRANSFER / CLOUD    #
+    ############################
+    rclone
+
+    ############################
+    # AUDIO SYSTEM (PIPEWIRE)  #
+    ############################
     pipewire
     wireplumber
 
+    ############################
+    # DEVTOOLS / CLI UTILITIES #
+    ############################
     git
     yq
 
+    ############################
+    # UBLUE-SPECIFIC PACKAGES  #
+    ############################
     ublue-brew
     uupd
     ublue-os-udev-rules
+
+    ############################
+    # DISPLAY + MULTIMEDIA     #
+    ############################
+    brightnessctl
+    ddcutil
+    ffmpeg
+    libavcodec
+    @multimedia
+    gstreamer1-plugins-bad-free
+    gstreamer1-plugins-bad-free-libs
+    gstreamer1-plugins-good
+    gstreamer1-plugins-base
+    lame
+    lame-libs
+    libjxl
+    ffmpegthumbnailer
+
+    ############################
+    # FONTS / LOCALE SUPPORT   #
+    ############################
+    default-fonts-core-emoji
+    google-noto-color-emoji-fonts
+    google-noto-emoji-fonts
+    glibc-all-langpacks
+    default-fonts
+
+    ############################
+    # DESKTOP UTILITIES        #
+    ############################
+    ghostty
+    cliphist
+    matugen
 )
 
-PKGS_TO_UNINSTALL=(
-)
+dnf5 -y install "${packages[@]}"
 
-dnf5 -y install "${PKGS_TO_INSTALL[@]}"
-# dnf5 -y remove "${PKGS_TO_UNINSTALL[@]}"
+# Uninstall
+packages=(
+)
+# dnf5 -y remove "${packages[@]}"
 
 dnf -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak flatpak
 dnf -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak-libs flatpak-libs
 dnf -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak-session-helper flatpak-session-helper
 
-sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/bootc update --quiet|' /usr/lib/systemd/system/bootc-fetch-apply-updates.service
-sed -i 's|^OnUnitInactiveSec=.*|OnUnitInactiveSec=7d\nPersistent=true|' /usr/lib/systemd/system/bootc-fetch-apply-updates.timer
-sed -i 's|#AutomaticUpdatePolicy.*|AutomaticUpdatePolicy=stage|' /etc/rpm-ostreed.conf
-sed -i 's|#LockLayering.*|LockLayering=true|' /etc/rpm-ostreed.conf
-
-sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.service
-
-tee /usr/lib/systemd/zram-generator.conf <<'EOF'
-[zram0]
-zram-size = min(ram, 8192)
-EOF
-
-tee /usr/lib/systemd/system-preset/91-resolved-default.preset <<'EOF'
-enable systemd-resolved.service
-EOF
-tee /usr/lib/tmpfiles.d/resolved-default.conf <<'EOF'
-L /etc/resolv.conf - - - - ../run/systemd/resolve/stub-resolv.conf
-EOF
-
-systemctl enable bootc-fetch-apply-updates
-systemctl enable auditd
-systemctl enable firewalld
+# Install Flathub repo
+curl -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo && \
+echo "Default=true" | tee -a /etc/flatpak/remotes.d/flathub.flatpakrepo > /dev/null
+flatpak remote-add --if-not-exists --system flathub /etc/flatpak/remotes.d/flathub.flatpakrepo
+flatpak remote-modify --system --enable flathub
 
 echo "::endgroup::"

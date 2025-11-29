@@ -7,8 +7,11 @@ set -ouex pipefail
 RELEASE="$(rpm -E %fedora)"
 mkdir -p /var/roothome
 
+
 dnf5 -y install dnf5-plugins
-COPRS=(
+echo -n "max_parallel_downloads=10" >>/etc/dnf/dnf.conf
+
+coprs=(
     ublue-os/packages
     ublue-os/flatpak-test
 
@@ -19,19 +22,18 @@ COPRS=(
     guillermodotn/cliphist
 )
 
-for COPR in "${COPRS[@]}"; do
-    echo "Enabling copr: $COPR"
-    dnf5 -y copr enable "$COPR"
+for copr in "${coprs[@]}"; do
+    echo "Enabling copr: $copr"
+    dnf5 -y copr enable "$copr"
 done
 
-REPOFILES=(
+repos=(
     https://negativo17.org/repos/fedora-multimedia.repo
 )
 
 # Loop and add repos
-for REPO in "${REPOFILES[@]}"; do
-    dnf5 -y config-manager addrepo --from-repofile="$REPO"
+for repo in "${repos[@]}"; do
+    dnf5 -y config-manager addrepo --from-repofile="$repo"
 done
-
 
 dnf5 -y install --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
