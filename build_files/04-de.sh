@@ -31,11 +31,7 @@ dnf5 -y install "${packages[@]}"
 # Install install_weak_deps=false
 packages=(
     niri
-    kf6-kirigami
-    qt6ct
-    polkit-kde
-    plasma-breeze
-    kf6-qqc2-desktop-style
+    adw-gtk3-theme
 )
 
 dnf5 -y install "${packages[@]}" --setopt=install_weak_deps=False
@@ -53,5 +49,7 @@ trap 'rm -rf "${MAPLE_TMPDIR}"' EXIT
 LATEST_RELEASE_FONT="$(curl "https://api.github.com/repos/subframe7536/maple-font/releases/latest" | jq '.assets[] | select(.name == "MapleMono-Variable.zip") | .browser_download_url' -rc)"
 curl -fSsLo "${MAPLE_TMPDIR}/maple.zip" "${LATEST_RELEASE_FONT}"
 unzip "${MAPLE_TMPDIR}/maple.zip" -d "/usr/share/fonts/Maple Mono"
+
+cp -r /ctx/config/* /etc/niri/
 
 echo "::endgroup::"

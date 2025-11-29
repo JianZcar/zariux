@@ -38,6 +38,7 @@ mask_services=(
     rpm-ostree-countme.timer
     logrotate.service
     logrotate.timer
+    akmods-keygen@akmods-keygen.service
 )
 
 systemctl enable "${system_services[@]}"
