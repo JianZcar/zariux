@@ -50,8 +50,4 @@ LATEST_RELEASE_FONT="$(curl "https://api.github.com/repos/subframe7536/maple-fon
 curl -fSsLo "${MAPLE_TMPDIR}/maple.zip" "${LATEST_RELEASE_FONT}"
 unzip "${MAPLE_TMPDIR}/maple.zip" -d "/usr/share/fonts/Maple Mono"
 
-# Install Config
-install -d /etc/niri/
-cp -r /ctx/config/* /etc/niri/
-
 echo "::endgroup::"
