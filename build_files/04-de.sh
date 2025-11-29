@@ -11,6 +11,7 @@ packages=(
     mesa-libgbm
     libdrm
     libinput
+    libwayland-server
 
     quickshell-git
     dms

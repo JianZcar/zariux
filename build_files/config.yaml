@@ -45,6 +45,17 @@
     user = "greeter"
     command = "dms-greeter --command niri"
 
+- path: /etc/greetd/greetd-spawn.pam_env.conf
+  content: |
+    XDG_SESSION_TYPE DEFAULT=wayland OVERRIDE=wayland
+
+- path: /etc/pam.d/greetd-spawn
+  content: |
+    auth       include      greetd
+    auth       required     pam_env.so conffile=/etc/greetd/greetd-spawn.pam_env.conf
+    account    include      greetd
+    session    include      greetd
+
 - path: /usr/lib/systemd/user/dms.service
   content: |
     [Unit]
