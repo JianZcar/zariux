@@ -46,6 +46,7 @@ packages=(
     tuned-ppd
     unzip
     whois
+    inotify-tools
 
     ############################
     # CAMERA / MOBILE SUPPORT  #
@@ -122,6 +123,7 @@ packages=(
     ghostty
     cliphist
     matugen
+    nautilus
 )
 
 dnf5 -y install "${packages[@]}"

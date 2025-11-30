@@ -24,6 +24,7 @@ user_services=(
     gnome-keyring-daemon.service
     swayidle.service
     xwayland-satellite.service
+    dms-brightness-osd.service
 )
 
 set_preset=(
