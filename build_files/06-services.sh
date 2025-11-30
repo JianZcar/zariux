@@ -40,6 +40,7 @@ mask_services=(
     logrotate.service
     logrotate.timer
     akmods-keygen@akmods-keygen.service
+    user@"$( id -u greeter )".service
 )
 
 systemctl enable "${system_services[@]}"

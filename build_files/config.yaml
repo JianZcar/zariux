@@ -54,11 +54,10 @@
 
 - path: /etc/pam.d/greetd-spawn
   content: |
-    auth        include      greetd
-    auth        required     pam_env.so conffile=/etc/greetd/greetd-spawn.pam_env.conf
-    account     include      greetd
-    session     include      greetd
-    session     optional     pam_systemd.so              class=none
+    auth       include      greetd
+    auth       required     pam_env.so conffile=/etc/greetd/greetd-spawn.pam_env.conf
+    account    include      greetd
+    session    include      greetd
 
 - path: /usr/lib/systemd/user/dms.service
   content: |
