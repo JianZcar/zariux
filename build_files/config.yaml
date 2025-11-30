@@ -48,17 +48,38 @@
     command = "dms-greeter --command niri"
     user = "greeter"
 
-- path: /usr/local/bin/dms-brightness-osd
+- path: /usr/local/bin/watch-bklight-key
   content: |
     #!/usr/bin/env bash
 
-    BACKLIGHT="/sys/class/backlight/intel_backlight/brightness"
-    MAX=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+    BKFILE="/run/backlight"
+    touch "$BKFILE"
 
-    inotifywait -m -e modify "$BACKLIGHT" | while read -r _; do
-        CUR=$(cat "$BACKLIGHT")
-        PERCENT=$(( CUR * 100 / MAX ))
-        dms ipc call brightness set "$PERCENT" ""
+    libinput debug-events --verbose | while read -r line; do
+        if [[ "$line" =~ KEY_BRIGHTNESSUP.*pressed ]]; then
+            echo 1 > "$BKFILE"  # 1 = up
+        elif [[ "$line" =~ KEY_BRIGHTNESSDOWN.*pressed ]]; then
+            echo 0 > "$BKFILE"  # 0 = down
+        fi
+    done
+  permissions: "755"
+
+- path: /usr/local/bin/apply-bklight
+  content: |
+    #!/usr/bin/env bash
+
+    BKFILE="/run/backlight"
+
+    inotifywait -m -e close_write "$BKFILE" | while read -r path action file; do
+        val=$(<"$BKFILE")
+        case "$val" in
+            1)
+                dms ipc call brightness increment 5 ""
+                ;;
+            0)
+                dms ipc call brightness decrement 5 ""
+                ;;
+        esac
     done
   permissions: "755"
 
@@ -73,19 +94,31 @@
     account    include      greetd
     session    include      greetd
 
-- path: /etc/systemd/system/dms-brightness-osd.service
+- path: /etc/systemd/system/watch-bklight-key.service
   content: |
     [Unit]
-    Description=DMS Brightness OSD
+    Description=Watches Brightness UP and DOWN keys
 
     [Service]
     Type=simple
-    ExecStart=/usr/local/bin/dms-brightness-osd
+    ExecStart=/usr/local/bin/watch-bklight-key
+    Restart=always
+
+    [Install]
+    WantedBy=multi-user.target
+
+- path: /etc/systemd/system/apply-bklight.service
+  content: |
+    [Unit]
+    Description=Applies brightness
+
+    [Service]
+    Type=simple
+    ExecStart=/usr/local/bin/apply-bklight
     Restart=always
 
     [Install]
     WantedBy=default.target
-
 
 - path: /usr/lib/systemd/user/dms.service
   content: |

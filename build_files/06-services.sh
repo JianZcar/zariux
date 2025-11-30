@@ -14,6 +14,7 @@ system_services=(
     firewalld
     greetd
     podman.socket
+    watch-bklight-key.service
 )
 
 user_services=(
@@ -24,7 +25,7 @@ user_services=(
     gnome-keyring-daemon.service
     swayidle.service
     xwayland-satellite.service
-    dms-brightness-osd.service
+    apply-bklight.service
 )
 
 set_preset=(
