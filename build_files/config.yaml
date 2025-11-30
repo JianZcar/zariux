@@ -56,11 +56,9 @@
     touch "$BKFILE"
 
     libinput debug-events --verbose | while read -r line; do
-        if [[ "$line" =~ KEY_BRIGHTNESSUP.*pressed ]]; then
-            echo 1 > "$BKFILE"  # 1 = up
-        elif [[ "$line" =~ KEY_BRIGHTNESSDOWN.*pressed ]]; then
-            echo 0 > "$BKFILE"  # 0 = down
-        fi
+      if [[ "$line" =~ KEY_BRIGHTNESS(UP|DOWN).*pressed ]]; then
+          touch "$BKFILE"
+      fi
     done
   permissions: "755"
 
@@ -71,15 +69,10 @@
     BKFILE="/run/backlight"
 
     inotifywait -m -e close_write "$BKFILE" | while read -r path action file; do
-        val=$(<"$BKFILE")
-        case "$val" in
-            1)
-                dms ipc call brightness increment 5 ""
-                ;;
-            0)
-                dms ipc call brightness decrement 5 ""
-                ;;
-        esac
+      current=$(brightnessctl g)
+      max=$(brightnessctl m)
+      percent=$(( (current * 100 + max - 1) / max ))
+      dms ipc call brightness set "$percent" ""
     done
   permissions: "755"
 
