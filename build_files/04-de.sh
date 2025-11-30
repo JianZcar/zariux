@@ -7,10 +7,6 @@ set -ouex pipefail
 shopt -s nullglob
 
 packages=(
-    mesa-libEGL
-    mesa-libgbm
-    libdrm
-    libinput
     libwayland-server
 
     quickshell-git
