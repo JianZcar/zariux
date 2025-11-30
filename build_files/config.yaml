@@ -107,7 +107,7 @@
     [Install]
     WantedBy=multi-user.target
 
-- path: /etc/systemd/system/apply-bklight.service
+- path: /usr/lib/systemd/user/apply-bklight.service
   content: |
     [Unit]
     Description=Applies brightness
