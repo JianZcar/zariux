@@ -125,6 +125,7 @@ packages=(
     bazaar
     ghostty
     nautilus
+    nautilus-python 
 )
 
 dnf5 -y install "${packages[@]}"
