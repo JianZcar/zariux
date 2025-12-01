@@ -124,6 +124,7 @@ packages=(
     cliphist
     matugen
     nautilus
+    nautilus-python 
 )
 
 dnf5 -y install "${packages[@]}"
