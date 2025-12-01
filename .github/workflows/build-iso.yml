@@ -19,7 +19,6 @@ on:
     branches:
       - main
     paths:
-      - './disk_config/disk.toml'
       - './disk_config/iso.toml'
       - './.github/workflows/build-disk.yml'
 
@@ -68,24 +67,19 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
-
-      - name: Build disk image
+          
+      - name: Build ISO
         id: build
-        uses: osbuild/bootc-image-builder-action@main
+        uses: ublue-os/titanoboa@main
         with:
-          builder-image: ${{ env.BIB_IMAGE }}
-          config-file: ./disk_config/iso.toml
-          image: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}
-          chown: ${{ env.USER_UID }}:${{ env.USER_GID }}
-          types: anaconda-iso
-          rootfs: btrfs
-          additional-args: --use-librepo=True
+          image-ref: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }}
+          builder-distro: fedora
 
       - name: Upload disk image and Checksum to Job Artifacts
         if: inputs.upload-to-s3 != true && github.event_name != 'pull_request'
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
         with:
-          path: ${{ steps.build.outputs.output-directory }}
+          path: ${{ steps.build.outputs.iso-dest }}
           if-no-files-found: error
           retention-days: 0
           compression-level: 0
