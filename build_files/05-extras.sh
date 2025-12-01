@@ -10,7 +10,7 @@ packages=(
     fish
     starship
 )
-# dnf5 -y install "${packages[@]}"
+dnf5 -y install "${packages[@]}"
 
 # Install install_weak_deps=false
 packages=(
