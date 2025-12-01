@@ -48,34 +48,6 @@
     command = "dms-greeter --command niri"
     user = "greeter"
 
-- path: /usr/local/bin/watch-bklight-key
-  content: |
-    #!/usr/bin/env bash
-
-    BKFILE="/run/backlight"
-    touch "$BKFILE"
-
-    libinput debug-events --verbose | while read -r line; do
-      if [[ "$line" =~ KEY_BRIGHTNESS(UP|DOWN).*pressed ]]; then
-          touch "$BKFILE"
-      fi
-    done
-  permissions: "755"
-
-- path: /usr/local/bin/apply-bklight
-  content: |
-    #!/usr/bin/env bash
-
-    BKFILE="/run/backlight"
-
-    inotifywait -m -e close_write "$BKFILE" | while read -r path action file; do
-      current=$(brightnessctl g)
-      max=$(brightnessctl m)
-      percent=$(( (current * 100 + max - 1) / max ))
-      dms ipc call brightness set "$percent" ""
-    done
-  permissions: "755"
-
 - path: /etc/greetd/greetd-spawn.pam_env.conf
   content: |
     XDG_SESSION_TYPE DEFAULT=wayland OVERRIDE=wayland
@@ -86,32 +58,6 @@
     auth       required     pam_env.so conffile=/etc/greetd/greetd-spawn.pam_env.conf
     account    include      greetd
     session    include      greetd
-
-- path: /etc/systemd/system/watch-bklight-key.service
-  content: |
-    [Unit]
-    Description=Watches Brightness UP and DOWN keys
-
-    [Service]
-    Type=simple
-    ExecStart=/usr/local/bin/watch-bklight-key
-    Restart=always
-
-    [Install]
-    WantedBy=multi-user.target
-
-- path: /usr/lib/systemd/user/apply-bklight.service
-  content: |
-    [Unit]
-    Description=Applies brightness
-
-    [Service]
-    Type=simple
-    ExecStart=/usr/local/bin/apply-bklight
-    Restart=always
-
-    [Install]
-    WantedBy=default.target
 
 - path: /usr/lib/systemd/user/dms.service
   content: |

@@ -14,18 +14,16 @@ system_services=(
     firewalld
     greetd
     podman.socket
-    watch-bklight-key.service
 )
 
 user_services=(
-    dms.service
-    cliphist.service
-    dsearch.service
+    dms
+    cliphist
+    dsearch
     gnome-keyring-daemon.socket
     gnome-keyring-daemon.service
-    swayidle.service
-    xwayland-satellite.service
-    apply-bklight.service
+    swayidle
+    xwayland-satellite
 )
 
 set_preset=(
