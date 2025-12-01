@@ -47,8 +47,8 @@ mask_services=(
 
 systemctl enable "${system_services[@]}"
 systemctl mask "${mask_services[@]}"
-systemctl --global enable "$user_services"
-systemctl --global preset "$set_preset"
+systemctl --global enable "${user_services[@]}"
+systemctl --global preset "${set_preset[@]}"
 
 add_wants_niri cliphist.service
 add_wants_niri swayidle.service
