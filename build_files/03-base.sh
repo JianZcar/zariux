@@ -68,9 +68,9 @@ packages=(
     steam-devices
 
     ############################
-    # FILE TRANSFER / CLOUD    #
+    # Storage UTILITIES        #
     ############################
-    rclone
+    udiskie
 
     ############################
     # AUDIO SYSTEM (PIPEWIRE)  #
@@ -111,6 +111,8 @@ packages=(
     ############################
     # FONTS / LOCALE SUPPORT   #
     ############################
+    nerd-fonts
+    jetbrains-mono-fonts
     default-fonts-core-emoji
     google-noto-color-emoji-fonts
     google-noto-emoji-fonts
@@ -120,9 +122,8 @@ packages=(
     ############################
     # DESKTOP UTILITIES        #
     ############################
+    bazaar
     ghostty
-    cliphist
-    matugen
     nautilus
 )
 

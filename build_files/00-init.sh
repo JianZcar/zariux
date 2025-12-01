@@ -21,6 +21,8 @@ coprs=(
     avengemedia/dms-git
     purian23/matugen
     guillermodotn/cliphist
+    trixieua/morewaita-icon-theme
+    che/nerd-fonts
 )
 
 for copr in "${coprs[@]}"; do
