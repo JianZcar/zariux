@@ -19,8 +19,6 @@ packages=(
     gnome-keyring-pam
     greetd
     greetd-selinux
-    orca
-    swayidle
     webp-pixbuf-loader
     wl-clipboard
     wlsunset

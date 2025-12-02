@@ -7,10 +7,19 @@ set -ouex pipefail
 RELEASE="$(rpm -E %fedora)"
 DATE=$(date +%Y%m%d)
 
-sed -i "s/^VERSION=.*/VERSION=\"${RELEASE} (Zariux)\"/" /usr/lib/os-release
-sed -i "s/^ID=fedora/ID=zariux/" /usr/lib/os-release
-sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"Zena ${RELEASE}.${DATE} (Fedora)\"/" /usr/lib/os-release
-echo "OSTREE_VERSION=\"${DEFAULT_TAG}.${DATE}\"" >> /usr/lib/os-release
+echo "Zariux" | tee "/etc/hostname"
+
+sed -i -f - /usr/lib/os-release <<EOF
+s|^NAME=.*|NAME=\"Zariux\"|
+s|^PRETTY_NAME=.*|PRETTY_NAME=\"Zariux ${RELEASE}.${DATE}\"|
+s|^VARIANT_ID=.*|VARIANT_ID=""|
+s|^DEFAULT_HOSTNAME=.*|DEFAULT_HOSTNAME="Zariux"|
+
+/^REDHAT_BUGZILLA_PRODUCT=/d
+/^REDHAT_BUGZILLA_PRODUCT_VERSION=/d
+/^REDHAT_SUPPORT_PRODUCT=/d
+/^REDHAT_SUPPORT_PRODUCT_VERSION=/d
+EOF
 
 sed -i "s/^EFIDIR=.*/EFIDIR=\"fedora\"/" /usr/sbin/grub2-switch-to-blscfg
 echo "::endgroup::"
