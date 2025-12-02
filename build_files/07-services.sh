@@ -22,14 +22,10 @@ user_services=(
     dsearch
     gnome-keyring-daemon.socket
     gnome-keyring-daemon.service
-    swayidle
     xwayland-satellite
 )
 
 set_preset=(
-    cliphist
-    swayidle
-    xwayland-satellite
 )
 
 mask_services=(
@@ -46,7 +42,7 @@ mask_services=(
 systemctl enable "${system_services[@]}"
 systemctl mask "${mask_services[@]}"
 systemctl --global enable "${user_services[@]}"
-systemctl --global preset "${set_preset[@]}"
+# systemctl --global preset "${set_preset[@]}"
 
 add_wants_niri cliphist.service
 add_wants_niri swayidle.service

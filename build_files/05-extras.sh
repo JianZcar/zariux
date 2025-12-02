@@ -9,6 +9,7 @@ shopt -s nullglob
 packages=(
     fish
     starship
+    chezmoi
 )
 dnf5 -y install "${packages[@]}"
 
