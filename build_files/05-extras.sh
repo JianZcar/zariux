@@ -10,6 +10,8 @@ packages=(
     fish
     starship
     chezmoi
+
+    code
 )
 dnf5 -y install "${packages[@]}"
 
