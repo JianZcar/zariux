@@ -14,6 +14,7 @@ system_services=(
     firewalld
     greetd
     podman.socket
+    libvirtd
 )
 
 user_services=(
