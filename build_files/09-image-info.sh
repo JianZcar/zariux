@@ -7,7 +7,7 @@ set -ouex pipefail
 RELEASE="$(rpm -E %fedora)"
 DATE=$(date +%Y%m%d)
 
-echo "Zariux" | tee "/etc/hostname"
+echo "zariux" | tee "/etc/hostname"
 
 sed -i -f - /usr/lib/os-release <<EOF
 s|^NAME=.*|NAME=\"Zariux\"|
