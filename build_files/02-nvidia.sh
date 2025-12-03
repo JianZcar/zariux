@@ -11,6 +11,8 @@ dnf5 -y install \
     egl-wayland2.x86_64 \
     egl-wayland2.i686 && \
 
+dnf5 install -y tree
+
 dnf5 install -y \
     /rpms/nvidia/libnvidia-cfg-* \
     /rpms/nvidia/libnvidia-fbc-* \
@@ -27,6 +29,7 @@ dnf5 install -y \
     /rpms/nvidia/libnvidia-container-tools-1* \
     supergfxctl
 
+tree /rpms
 semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp
 
 # Universal Blue specific Initramfs fixes

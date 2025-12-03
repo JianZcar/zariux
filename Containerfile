@@ -8,7 +8,7 @@ FROM ghcr.io/ublue-os/akmods-nvidia-open:bazzite-${FEDORA_VERSION}-${ARCH} AS ak
 FROM scratch AS ctx
 COPY build_files /
 
-FROM quay.io/fedora/fedora-bootc:43
+FROM quay.io/fedora/fedora-bootc:${FEDORA_VERSION}
 
 ARG DEFAULT_TAG=${DEFAULT_TAG}
 
