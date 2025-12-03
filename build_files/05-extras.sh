@@ -12,6 +12,8 @@ packages=(
     chezmoi
 
     code
+
+    switcheroo-control
 )
 dnf5 -y install "${packages[@]}"
 
