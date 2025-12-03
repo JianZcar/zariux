@@ -59,6 +59,22 @@
     account    include      greetd
     session    include      greetd
 
+- path: /etc/systemd/system/podman-tcp.service
+  content: |
+    [Unit]
+    Description=Podman TCP socket
+    After=network.target
+    StartLimitIntervalSec=0
+
+    [Service]
+    Type=simple
+    Restart=always
+    RestartSec=1
+    ExecStart=/usr/bin/podman system service --time=0 tcp://0.0.0.0:37017
+
+    [Install]
+    WantedBy=multi-user.target
+
 - path: /usr/lib/systemd/user/dms.service
   content: |
     [Unit]

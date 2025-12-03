@@ -15,9 +15,11 @@ system_services=(
     greetd
     podman.socket
     libvirtd
+    podman-tcp
 )
 
 user_services=(
+    podman.socket
     dms
     cliphist
     dsearch
