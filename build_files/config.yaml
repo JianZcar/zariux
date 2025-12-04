@@ -114,16 +114,12 @@
     AttrKeyboardIntegration=internal
 
 
-- path: /usr/libexec/nvidia_offload
+- path: /usr/libexec/nvidia-offload
   content: |
     #!/usr/bin/env bash
 
     config_file="$HOME/.config/niri/nvidia.kdl"
-    watch_file="/run/nvidia_offload"
-
-    if [ ! -f "$watch_file" ]; then
-      echo "0" > "$watch_file"
-    fi
+    watch_file="/run/nvidia-offload"
 
     write_settings() {
         cat << EOF > "$config_file"
@@ -142,6 +138,13 @@
     EOF
     }
 
+    # Wait until /run/nvidia_offload exists
+    while [ ! -f "$watch_file" ]; do
+        echo "Waiting for $watch_file to appear..."
+        clear_settings
+        sleep 5
+    done
+
     current_value=$(cat "$watch_file")
     if [ "$current_value" == "1" ]; then
         write_settings
@@ -154,7 +157,7 @@
 
         if [ "$new_value" == "1" ]; then
             write_settings
-        elif [ "$new_value" == "0" ]; then
+        else
             clear_settings
         fi
     done
@@ -166,7 +169,7 @@
     Description=Real-time watch for NVIDIA offload settings
 
     [Service]
-    ExecStart=/usr/libexec/nvidia_offload
+    ExecStart=/usr/libexec/nvidia-offload
     Restart=always
 
     [Install]
@@ -176,18 +179,27 @@
   content: |
     #!/usr/bin/env bash
 
-    file="/run/nvidia_offload"
+    . /usr/lib/tuned/functions
 
     start() {
-      if command -v nvidia-smi &> /dev/null; then
-        echo 1 | tee "$file"
-      else
-        echo 0 | tee "$file"
-      fi
+        file="/run/nvidia-offload"
+
+        if command -v nvidia-smi &> /dev/null; then
+            echo 1 | tee "$file"
+        else
+            echo 0 | tee "$file"
+        fi
+
+        return 0
     }
+
     stop() {
-      echo 0 | tee "$file"
+        file="/run/nvidia-offload"
+        echo 0 | tee "$file"
+        return 0
     }
+
+    process "$@"
   permissions: "755"
 
 - path: /usr/lib/tuned/profiles/throughput-performance-bazzite/tuned.conf
