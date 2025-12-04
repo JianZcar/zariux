@@ -142,62 +142,53 @@
     mkdir -p "$USER_DIR"
 
     inject() {
-        local file="$1"
+        local src_file="$1"
+        local name="$(basename "$src_file")"
+        local target="$USER_DIR/$name"
+        local file
 
-        grep -q "Exec=prime-launch" "$file" && return
+        if [ -L "$src_file" ]; then
+            file="$(realpath "$src_file")"
+        else
+            file="$src_file"
+        fi
 
         local categories
+        categories=$(grep -i "^Categories=" "$file" | tr '[:upper:]' '[:lower:]' | tr ';' ' ')
 
-        categories=$(grep -i "^Categories=" "$file" |
-                     tr '[:upper:]' '[:lower:]' |
-                     tr ';' ' ')
+        if [[ -f "$target" || -f "$file" ]]; then
+            grep -q "Exec=prime-launch" "$target" &>/dev/null && return
+            grep -q "Exec=prime-launch" "$file" &>/dev/null && return
+        fi
 
-        allowed_categories=(
-            "game"
-            "graphics"
-            "video"
-            "terminalemulator"
-            "webbrowser"
-            "recorder")
+        local allowed_categories=(
+            game
+            graphics
+            video
+            terminalemulator
+            webbrowser
+            recorder
+        )
 
-        category_regex=$(printf "|%s" "${allowed_categories[@]}")
+        local category_regex
+        category_regex="$(printf "|%s" "${allowed_categories[@]}")"
         category_regex="${category_regex:1}"
 
-        if [[ "$categories" =~ ($category_regex) ]]; then
-            sed -i '/^Exec=/ s|^Exec=|Exec=prime-launch |' "$file"
+        if [[ $categories =~ $category_regex ]]; then
+            base="${name%.desktop}"
+            cp "$file" "$target"
+            sed -i '/^Exec=/ s|^Exec=|Exec=prime-launch |' "$target"
         fi
-    }
-
-    copy_and_inject() {
-        local src="$1"
-        local name
-        local real_src
-        name="$(basename "$src")"
-        local target="$USER_DIR/$name"
-
-        if [ -L "$src" ]; then
-            real_src="$(realpath "$src")"
-        else
-            real_src="$src"
-        fi
-
-        if [[ ! -f "$target" ]]; then
-            cp "$real_src" "$target"
-        fi
-
-        inject "$target"
     }
 
     for file in "$SYSTEM_DIR"/*.desktop; do
-        copy_and_inject "$file"
+        inject "$file"
     done
-
     for file in "$USER_DIR"/*.desktop; do
         inject "$file"
     done
-
     for file in "$FLATPAK_DIR"/*.desktop; do
-        copy_and_inject "$file"
+        inject "$file"
     done
   permissions: "755"
 
