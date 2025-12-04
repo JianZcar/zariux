@@ -8,6 +8,8 @@ set -ouex pipefail
 dnf5 install -y "${AKMODNV_PATH}"/ublue-os/ublue-os-nvidia-addons-*.rpm
 
 dnf5 -y install \
+    egl-wayland.x86_64 \
+    egl-wayland.i686 \
     egl-wayland2.x86_64 \
     egl-wayland2.i686 && \
 
