@@ -203,9 +203,9 @@
     }
 
     # Wait until /run/nvidia_offload exists
+    clear_settings
     while [ ! -f "$watch_file" ]; do
         echo "Waiting for $watch_file to appear..."
-        clear_settings
         sleep 5
     done
 
