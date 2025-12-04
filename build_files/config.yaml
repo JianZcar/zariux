@@ -114,7 +114,7 @@
     AttrKeyboardIntegration=internal
 
 
-- path: usr/libexec/nvidia_offload
+- path: /usr/libexec/nvidia_offload
   content: |
     #!/usr/bin/env bash
 
@@ -180,13 +180,13 @@
 
     start() {
       if command -v nvidia-smi &> /dev/null; then
-        echo 1 > "$file"
+        echo 1 | tee "$file"
       else
-        echo 0 > "$file"
+        echo 0 | tee "$file"
       fi
     }
     stop() {
-      echo 0 > "$file"
+      echo 0 | tee "$file"
     }
   permissions: "755"
 
