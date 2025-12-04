@@ -134,8 +134,10 @@
   content: |
     #!/usr/bin/env bash
 
+    shopt -s nullglob
     SYSTEM_DIR="/usr/share/applications"
     USER_DIR="$HOME/.local/share/applications"
+    FLATPAK_DIR="/var/lib/flatpak/exports/share/applications"
 
     mkdir -p "$USER_DIR"
 
@@ -145,24 +147,57 @@
         grep -q "Exec=prime-launch" "$file" && return
 
         local categories
-        categories=$(grep -i "^Categories=" "$file" | tr '[:upper:]' '[:lower:]')
 
-        if [[ "$categories" =~ (game|graphics|video|terminalemulator) ]]; then
+        categories=$(grep -i "^Categories=" "$file" |
+                     tr '[:upper:]' '[:lower:]' |
+                     tr ';' ' ')
+
+        allowed_categories=(
+            "game"
+            "graphics"
+            "video"
+            "terminalemulator"
+            "webbrowser"
+            "recorder")
+
+        category_regex=$(printf "|%s" "${allowed_categories[@]}")
+        category_regex="${category_regex:1}"
+
+        if [[ "$categories" =~ ($category_regex) ]]; then
             sed -i '/^Exec=/ s|^Exec=|Exec=prime-launch |' "$file"
         fi
     }
 
-    for file in "$SYSTEM_DIR"/*.desktop; do
-        name=$(basename "$file")
-        target="$USER_DIR/$name"
+    copy_and_inject() {
+        local src="$1"
+        local name
+        local real_src
+        name="$(basename "$src")"
+        local target="$USER_DIR/$name"
 
-        [[ ! -f "$target" ]] && cp "$file" "$target"
+        if [ -L "$src" ]; then
+            real_src="$(realpath "$src")"
+        else
+            real_src="$src"
+        fi
+
+        if [[ ! -f "$target" ]]; then
+            cp "$real_src" "$target"
+        fi
 
         inject "$target"
+    }
+
+    for file in "$SYSTEM_DIR"/*.desktop; do
+        copy_and_inject "$file"
     done
 
     for file in "$USER_DIR"/*.desktop; do
         inject "$file"
+    done
+
+    for file in "$FLATPAK_DIR"/*.desktop; do
+        copy_and_inject "$file"
     done
   permissions: "755"
 
@@ -170,13 +205,15 @@
   content: |
     [Unit]
     Description=Inject PRIME wrapper into desktop files
-    Wants=default.target
+    After=graphical-session.target
+    Wants=graphical-session.target
 
     [Service]
     Type=oneshot
     ExecStart=/usr/libexec/prime-inject
-    RemainAfterExit=yes
 
+    [Install]
+    WantedBy=graphical-session.target
 
 - path: /usr/libexec/nvidia-offload
   content: |
@@ -202,11 +239,10 @@
     EOF
     }
 
-    # Wait until /run/nvidia_offload exists
     clear_settings
+    echo "Waiting for $watch_file to appear..."
     while [ ! -f "$watch_file" ]; do
-        echo "Waiting for $watch_file to appear..."
-        sleep 5
+        sleep 1
     done
 
     current_value=$(cat "$watch_file")
