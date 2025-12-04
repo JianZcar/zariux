@@ -113,6 +113,70 @@
     MatchProduct=0xC976
     AttrKeyboardIntegration=internal
 
+- path: /usr/local/bin/prime-launch
+  content: |
+    #!/usr/bin/env bash
+    watch_file="/run/nvidia-offload"
+
+    if [ -f "$watch_file" ]; then
+        current_value=$(cat "$watch_file" 2>/dev/null)
+        if [ "$current_value" = "1" ]; then
+            export __NV_PRIME_RENDER_OFFLOAD=1
+            export __GLX_VENDOR_LIBRARY_NAME=nvidia
+            export __VK_LAYER_NV_optimus=NVIDIA_only
+        fi
+    fi
+
+    exec "$@"
+  permissions: "755"
+
+- path: /usr/libexec/prime-inject
+  content: |
+    #!/usr/bin/env bash
+
+    SYSTEM_DIR="/usr/share/applications"
+    USER_DIR="$HOME/.local/share/applications"
+
+    mkdir -p "$USER_DIR"
+
+    inject() {
+        local file="$1"
+
+        grep -q "Exec=prime-launch" "$file" && return
+
+        local categories
+        categories=$(grep -i "^Categories=" "$file" | tr '[:upper:]' '[:lower:]')
+
+        if [[ "$categories" =~ (game|graphics|video|terminalemulator) ]]; then
+            sed -i '/^Exec=/ s|^Exec=|Exec=prime-launch |' "$file"
+        fi
+    }
+
+    for file in "$SYSTEM_DIR"/*.desktop; do
+        name=$(basename "$file")
+        target="$USER_DIR/$name"
+
+        [[ ! -f "$target" ]] && cp "$file" "$target"
+
+        inject "$target"
+    done
+
+    for file in "$USER_DIR"/*.desktop; do
+        inject "$file"
+    done
+  permissions: "755"
+
+- path: /usr/lib/systemd/user/prime-inject.service
+  content: |
+    [Unit]
+    Description=Inject PRIME wrapper into desktop files
+    Wants=default.target
+
+    [Service]
+    Type=oneshot
+    ExecStart=/usr/libexec/prime-inject
+    RemainAfterExit=yes
+
 
 - path: /usr/libexec/nvidia-offload
   content: |
