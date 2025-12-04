@@ -119,7 +119,7 @@
     #!/usr/bin/env bash
 
     config_file="$HOME/.config/niri/nvidia.kdl"
-    watch_file="/tmp/nvidia_offload"
+    watch_file="/run/nvidia_offload"
 
     if [ ! -f "$watch_file" ]; then
       echo "0" > "$watch_file"
@@ -166,9 +166,8 @@
     Description=Real-time watch for NVIDIA offload settings
 
     [Service]
-    ExecStart=usr/libexec/nvidia_offload
+    ExecStart=/usr/libexec/nvidia_offload
     Restart=always
-    User=%i
 
     [Install]
     WantedBy=default.target
@@ -177,17 +176,17 @@
   content: |
     #!/usr/bin/env bash
 
-    tmp_file="/tmp/nvidia_offload"
+    file="/run/nvidia_offload"
 
     start() {
       if command -v nvidia-smi &> /dev/null; then
-        echo 1 > "$tmp_file"
+        echo 1 > "$file"
       else
-        echo 0 > "$tmp_file"
+        echo 0 > "$file"
       fi
     }
     stop() {
-      echo 0 > "$tmp_file"
+      echo 0 > "$file"
     }
   permissions: "755"
 
@@ -221,7 +220,7 @@
     vm.page-cluster = 0
 
     [script]
-    script=${i:PROFILE_DIR}/script.sh
+    script=/usr/lib/tuned/profiles/throughput-performance-bazzite/script.sh
 
 - path: /usr/lib/tuned/profiles/balanced-bazzite/tuned.conf
   content: |
