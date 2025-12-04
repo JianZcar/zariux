@@ -113,6 +113,84 @@
     MatchProduct=0xC976
     AttrKeyboardIntegration=internal
 
+
+- path: usr/libexec/nvidia_offload
+  content: |
+    #!/usr/bin/env bash
+
+    config_file="$HOME/.config/niri/nvidia.kdl"
+    watch_file="/tmp/nvidia_offload"
+
+    if [ ! -f "$watch_file" ]; then
+      echo "0" > "$watch_file"
+    fi
+
+    write_settings() {
+        cat << EOF > "$config_file"
+    environment {
+        __NV_PRIME_RENDER_OFFLOAD "1"
+        __GLX_VENDOR_LIBRARY_NAME "nvidia"
+        __VK_LAYER_NV_optimus "NVIDIA_only"
+    }
+    EOF
+    }
+
+    clear_settings() {
+        cat << EOF > "$config_file"
+    environment {
+    }
+    EOF
+    }
+
+    current_value=$(cat "$watch_file")
+    if [ "$current_value" == "1" ]; then
+        write_settings
+    else
+        clear_settings
+    fi
+
+    inotifywait -m -e modify "$watch_file" | while read -r _ _ _; do
+        new_value=$(cat "$watch_file")
+
+        if [ "$new_value" == "1" ]; then
+            write_settings
+        elif [ "$new_value" == "0" ]; then
+            clear_settings
+        fi
+    done
+  permissions: "755"
+
+- path: /usr/lib/systemd/user/nvidia-offload.service
+  content: |
+    [Unit]
+    Description=Real-time watch for NVIDIA offload settings
+
+    [Service]
+    ExecStart=usr/libexec/nvidia_offload
+    Restart=always
+    User=%i
+
+    [Install]
+    WantedBy=default.target
+
+- path: /usr/lib/tuned/profiles/throughput-performance-bazzite/script.sh
+  content: |
+    #!/usr/bin/env bash
+
+    tmp_file="/tmp/nvidia_offload"
+
+    start() {
+      if command -v nvidia-smi &> /dev/null; then
+        echo 1 > "$tmp_file"
+      else
+        echo 0 > "$tmp_file"
+      fi
+    }
+    stop() {
+      echo 0 > "$tmp_file"
+    }
+  permissions: "755"
+
 - path: /usr/lib/tuned/profiles/throughput-performance-bazzite/tuned.conf
   content: |
     #
@@ -141,6 +219,9 @@
     vm.dirty_bytes = 268435456
     vm.dirty_background_bytes = 134217728
     vm.page-cluster = 0
+
+    [script]
+    script=${i:PROFILE_DIR}/script.sh
 
 - path: /usr/lib/tuned/profiles/balanced-bazzite/tuned.conf
   content: |
