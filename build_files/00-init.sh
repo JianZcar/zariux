@@ -15,6 +15,8 @@ coprs=(
     ublue-os/packages
     ublue-os/flatpak-test
 
+    lukenukem/asus-linux
+
     yalter/niri-git
     ulysg/xwayland-satellite
     avengemedia/danklinux
