@@ -27,6 +27,7 @@ user_services=(
     gnome-keyring-daemon.service
     xwayland-satellite
     nvidia-offload
+    prime-inject
 )
 
 set_preset=(
