@@ -1,8 +1,8 @@
 ARG FEDORA_VERSION=43
 ARG ARCH=x86_64
 
-FROM ghcr.io/bazzite-org/kernel-bazzite:latest-f${FEDORA_VERSION}-${ARCH} AS kernel
-FROM ghcr.io/bazzite-org/nvidia-drivers AS nvidia
+FROM ghcr.io/bazzite-org/kernel-bazzite:6.17.7-ba19-f43-x86_64 AS kernel
+FROM ghcr.io/bazzite-org/nvidia-drivers:580.95.05-f43-x86_64 AS nvidia
 FROM ghcr.io/ublue-os/akmods-nvidia-open:bazzite-${FEDORA_VERSION}-${ARCH} AS akmod-nvidia
 
 FROM scratch AS ctx
