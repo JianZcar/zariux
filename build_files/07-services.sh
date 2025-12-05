@@ -49,7 +49,6 @@ systemctl --global enable "${user_services[@]}"
 # systemctl --global preset "${set_preset[@]}"
 
 add_wants_niri cliphist.service
-add_wants_niri swayidle.service
 add_wants_niri xwayland-satellite.service
 cat /usr/lib/systemd/user/niri.service
 
