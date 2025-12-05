@@ -167,7 +167,6 @@
             video
             terminalemulator
             webbrowser
-            recorder
         )
 
         local category_regex
