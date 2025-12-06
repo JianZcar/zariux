@@ -12,6 +12,7 @@ packages=(
     chezmoi
 
     switcheroo-control
+    python3-gobject
 )
 dnf5 -y install "${packages[@]}"
 
