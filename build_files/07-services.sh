@@ -9,6 +9,7 @@ add_wants_niri() {
 }
 
 system_services=(
+    supergfxd
     bootc-fetch-apply-updates
     auditd
     firewalld
