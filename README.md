@@ -10,6 +10,8 @@ Zariux OS is a custom Fedora-based operating system designed for a unique and op
 *   **Optimized Performance:** The OS includes custom configurations and optimizations for system performance, ensuring a smooth and responsive environment.
 *   **Container-Native:** Built on `bootc`, Zariux OS embraces a container-native approach, providing immutable infrastructure benefits, easier updates, and reliable rollbacks.
 
+*   **GAMING:** Coming soon...
+
 ## Project Structure:
 
 The OS configuration and build process are managed through the `build_files/` directory, which contains scripts and configuration files (`build_files/config.yaml`, etc.) to define the system's behavior and installed components.
