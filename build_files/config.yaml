@@ -101,96 +101,35 @@
 - path: /usr/local/bin/prime-launch
   content: |
     #!/usr/bin/env bash
-    watch_file="/run/nvidia-offload"
 
-    if [ -f "$watch_file" ]; then
-        current_value=$(cat "$watch_file" 2>/dev/null)
-        if [ "$current_value" = "1" ]; then
-            export __NV_PRIME_RENDER_OFFLOAD=1
-            export __GLX_VENDOR_LIBRARY_NAME=nvidia
-            export __VK_LAYER_NV_optimus=NVIDIA_only
-        fi
+    watch_file="/run/nvidia-offload"
+    conf_file="$HOME/.config/prime-launch.conf"
+
+    [ -f "$watch_file" ] || exec "$@"
+    [ "$(cat "$watch_file" 2>/dev/null)" = "1" ] || exec "$@"
+    [ -f "$conf_file" ] || exec "$@"
+
+    patterns_regex=$(sed -n '
+      s/#.*//                          # strip comments
+      /^[[:space:]]*$/d                # drop empty lines
+      s/([][.^$+(){}|\\])/\\\1/g       # escape regex metacharacters except * and ?
+      s/\*/.*/g                        # glob * -> regex .*
+      s/\?/.?/g                        # glob ? -> regex .
+      p
+    ' "$conf_file" | paste -sd '|' -)
+
+    [ -n "$patterns_regex" ] || exec "$@"
+
+    if printf '%s\n' "$@" | grep -E -q "^(${patterns_regex})$"; then
+        export __NV_PRIME_RENDER_OFFLOAD=1
+        export __GLX_VENDOR_LIBRARY_NAME=nvidia
+        export __VK_LAYER_NV_optimus=NVIDIA_only
     fi
 
     exec "$@"
   permissions: "755"
 
-- path: /usr/libexec/prime-inject
-  content: |
-    #!/usr/bin/env bash
-
-    shopt -s nullglob
-    SYSTEM_DIR="/usr/share/applications"
-    USER_DIR="$HOME/.local/share/applications"
-    FLATPAK_DIR="/var/lib/flatpak/exports/share/applications"
-
-    mkdir -p "$USER_DIR"
-
-    inject() {
-        local src_file="$1"
-        local name="$(basename "$src_file")"
-        local target="$USER_DIR/$name"
-        local file
-
-        if [ -L "$src_file" ]; then
-            file="$(realpath "$src_file")"
-        else
-            file="$src_file"
-        fi
-
-        local categories
-        categories=$(grep -i "^Categories=" "$file" | tr '[:upper:]' '[:lower:]' | tr ';' ' ')
-
-        if [[ -f "$target" || -f "$file" ]]; then
-            grep -q "Exec=prime-launch" "$target" &>/dev/null && return
-            grep -q "Exec=prime-launch" "$file" &>/dev/null && return
-        fi
-
-        local allowed_categories=(
-            game
-            graphics
-            video
-            terminalemulator
-            webbrowser
-        )
-
-        local category_regex
-        category_regex="$(printf "|%s" "${allowed_categories[@]}")"
-        category_regex="${category_regex:1}"
-
-        if [[ $categories =~ $category_regex ]]; then
-            base="${name%.desktop}"
-            cp "$file" "$target"
-            sed -i '/^Exec=/ s|^Exec=|Exec=prime-launch |' "$target"
-        fi
-    }
-
-    for file in "$SYSTEM_DIR"/*.desktop; do
-        inject "$file"
-    done
-    for file in "$USER_DIR"/*.desktop; do
-        inject "$file"
-    done
-    for file in "$FLATPAK_DIR"/*.desktop; do
-        inject "$file"
-    done
-  permissions: "755"
-
-- path: /usr/lib/systemd/user/prime-inject.service
-  content: |
-    [Unit]
-    Description=Inject PRIME wrapper into desktop files
-    After=graphical-session.target
-    Wants=graphical-session.target
-
-    [Service]
-    Type=oneshot
-    ExecStart=/usr/libexec/prime-inject
-
-    [Install]
-    WantedBy=graphical-session.target
-
-- path: /usr/lib/tuned/profiles/throughput-performance-bazzite/script.sh
+- path: /usr/lib/tuned/scripts/nvidia-offload.sh
   content: |
     #!/usr/bin/env bash
 
@@ -247,7 +186,7 @@
     vm.page-cluster = 0
 
     [script]
-    script=/usr/lib/tuned/profiles/throughput-performance-bazzite/script.sh
+    script=/usr/lib/tuned/scripts/nvidia-offload.sh
 
 - path: /usr/lib/tuned/profiles/balanced-bazzite/tuned.conf
   content: |
@@ -277,6 +216,9 @@
     vm.dirty_bytes = 268435456
     vm.dirty_background_bytes = 134217728
     vm.page-cluster = 0
+
+    [script]
+    script=/usr/lib/tuned/scripts/nvidia-offload.sh
 
 - path: /usr/lib/tuned/profiles/balanced-battery-bazzite/tuned.conf
   content: |
