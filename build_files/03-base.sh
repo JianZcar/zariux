@@ -59,9 +59,6 @@ packages=(
     ifuse
     jmtpfs
     libcamera{,-{v4l2,gstreamer,tools}}
-    libcamera-v4l2
-    libcamera-gstreamer
-    libcamera-tools
     libimobiledevice
     uxplay
 
@@ -97,15 +94,14 @@ packages=(
     ############################
     # DISPLAY + MULTIMEDIA     #
     ############################
+    @multimedia
     ffmpeg
     libavcodec
-    @multimedia
     gstreamer1-plugins-bad-free
     gstreamer1-plugins-bad-free-libs
     gstreamer1-plugins-good
     gstreamer1-plugins-base
     qt6-qtmultimedia
-    lame
     lame-libs
     libjxl
     ffmpegthumbnailer
@@ -115,12 +111,12 @@ packages=(
     ############################
     # FONTS / LOCALE SUPPORT   #
     ############################
-    nerd-fonts
-    default-fonts-core-emoji
-    google-noto-color-emoji-fonts
-    google-noto-emoji-fonts
-    glibc-all-langpacks
     default-fonts
+    glibc-all-langpacks
+    google-noto-emoji-fonts
+    google-noto-color-emoji-fonts
+    default-fonts-core-emoji
+    nerd-fonts
 
     ############################
     # DESKTOP UTILITIES        #

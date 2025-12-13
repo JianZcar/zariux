@@ -13,10 +13,10 @@ packages=(
 
     switcheroo-control
     python3-gobject
+
+    @virtualization
 )
 dnf5 -y install "${packages[@]}"
-
-dnf5 -y group install "virtualization"
 
 # Install install_weak_deps=false
 packages=(
