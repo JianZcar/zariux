@@ -22,11 +22,9 @@ system_services=(
 user_services=(
     podman.socket
     dms
-    cliphist
     dsearch
     gnome-keyring-daemon.socket
     gnome-keyring-daemon.service
-    xwayland-satellite
     prime-inject
 )
 
@@ -40,7 +38,6 @@ mask_services=(
     rpm-ostree-countme.timer
     logrotate.service
     logrotate.timer
-    akmods-keygen@akmods-keygen.service
     user@"$( id -u greeter )".service
 )
 
@@ -48,9 +45,5 @@ systemctl enable "${system_services[@]}"
 systemctl mask "${mask_services[@]}"
 systemctl --global enable "${user_services[@]}"
 # systemctl --global preset "${set_preset[@]}"
-
-add_wants_niri cliphist.service
-add_wants_niri xwayland-satellite.service
-cat /usr/lib/systemd/user/niri.service
 
 echo "::endgroup::"

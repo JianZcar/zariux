@@ -48,6 +48,9 @@ packages=(
     whois
     inotify-tools
 
+    xdg-desktop-portal-gnome
+    xdg-user-dirs
+
     ############################
     # CAMERA / MOBILE SUPPORT  #
     ############################
@@ -94,8 +97,6 @@ packages=(
     ############################
     # DISPLAY + MULTIMEDIA     #
     ############################
-    brightnessctl
-    ddcutil
     ffmpeg
     libavcodec
     @multimedia
@@ -103,16 +104,18 @@ packages=(
     gstreamer1-plugins-bad-free-libs
     gstreamer1-plugins-good
     gstreamer1-plugins-base
+    qt6-qtmultimedia
     lame
     lame-libs
     libjxl
     ffmpegthumbnailer
+    glycin-thumbnailer
+    webp-pixbuf-loader
 
     ############################
     # FONTS / LOCALE SUPPORT   #
     ############################
     nerd-fonts
-    jetbrains-mono-fonts
     default-fonts-core-emoji
     google-noto-color-emoji-fonts
     google-noto-emoji-fonts
@@ -125,7 +128,7 @@ packages=(
     bazaar
     ghostty
     nautilus
-    nautilus-python 
+    nautilus-python
 )
 
 dnf5 -y install "${packages[@]}"

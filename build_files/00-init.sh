@@ -19,8 +19,6 @@ coprs=(
     ulysg/xwayland-satellite
     avengemedia/danklinux
     avengemedia/dms-git
-    purian23/matugen
-    guillermodotn/cliphist
     trixieua/morewaita-icon-theme
     che/nerd-fonts
 )

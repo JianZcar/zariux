@@ -42,4 +42,33 @@ rm -f /usr/share/vulkan/icd.d/nouveau_icd.*.json
 
 ln -s libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so
 
+tee /usr/lib/modprobe.d/00-nouveau-blacklist.conf <<'EOF'
+blacklist nouveau
+options nouveau modeset=0
+EOF
+
+tee /usr/lib/bootc/kargs.d/00-nvidia.toml <<'EOF'
+kargs = ["rd.driver.blacklist=nouveau", "modprobe.blacklist=nouveau", "nvidia-drm.modeset=1"]
+EOF
+
+tee /usr/lib/systemd/system/nvctk-cdi.service <<'EOF'
+[Unit]
+Description=nvidia container toolkit CDI auto-generation
+ConditionFileIsExecutable=/usr/bin/nvidia-ctk
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable nvctk-cdi.service
+systemctl disable akmods-keygen@akmods-keygen.service
+systemctl mask akmods-keygen@akmods-keygen.service
+systemctl disable akmods-keygen.target
+systemctl mask akmods-keygen.target
+
 echo "::endgroup::"

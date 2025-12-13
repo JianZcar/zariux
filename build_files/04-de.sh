@@ -7,28 +7,25 @@ set -ouex pipefail
 shopt -s nullglob
 
 packages=(
-    libwayland-server
+    greetd
+    greetd-selinux
 
     quickshell-git
     dms
-    dms-cli
     dms-greeter
+    danksearch
     dgop
-    glycin-thumbnailer
+
     gnome-keyring
     gnome-keyring-pam
-    greetd
-    greetd-selinux
-    webp-pixbuf-loader
+
     wl-clipboard
-    wlsunset
-    xdg-desktop-portal-gnome
-    xdg-user-dirs
+
     xwayland-satellite
 
     morewaita-icon-theme
+    material-symbols-fonts
 
-    i2c-tools
     cliphist
     matugen
     cava
