@@ -22,4 +22,8 @@ sed -i 's|uupd|& --disable-module-distrobox|' /usr/lib/systemd/system/uupd.servi
 
 sed -i '/gnome_keyring.so/ s/-auth/auth/ ; /gnome_keyring.so/ s/-session/session/' /etc/pam.d/greetd
 
+tee /usr/lib/bootc/kargs.d/01-silent.toml <<'EOF'
+kargs = ["loglevel=1", "rd.udev.log_level=3", "vt.global_cursor_default=0"]
+EOF
+
 echo "::endgroup::"
