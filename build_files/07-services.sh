@@ -25,7 +25,6 @@ user_services=(
     dsearch
     gnome-keyring-daemon.socket
     gnome-keyring-daemon.service
-    prime-inject
 )
 
 set_preset=(
