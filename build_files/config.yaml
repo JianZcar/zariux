@@ -129,7 +129,7 @@
     exec "$@"
   permissions: "755"
 
-- path: /usr/lib/tuned/scripts/nvidia-offload.sh
+- path: /usr/lib/tuned/profiles/throughput-performance-bazzite/script.sh
   content: |
     #!/usr/bin/env bash
 
@@ -186,7 +186,7 @@
     vm.page-cluster = 0
 
     [script]
-    script=/usr/lib/tuned/scripts/nvidia-offload.sh
+    script=/usr/lib/tuned/profiles/throughput-performance-bazzite/script.sh
 
 - path: /usr/lib/tuned/profiles/balanced-bazzite/tuned.conf
   content: |
@@ -218,7 +218,7 @@
     vm.page-cluster = 0
 
     [script]
-    script=/usr/lib/tuned/scripts/nvidia-offload.sh
+    script=/usr/lib/tuned/profiles/balanced-bazzite/script.sh
 
 - path: /usr/lib/tuned/profiles/balanced-battery-bazzite/tuned.conf
   content: |
